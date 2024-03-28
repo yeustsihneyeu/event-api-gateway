@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: event-gateway-service
+  cloud:
+    consul:
+      host: localhost
+      discovery:
+        prefer-ip-address: true
+        health-check-timeout: 30s
+        health-check-interval: 20s
+        health-check-path: /actuator/health
+        query-passing: true
+      port: 9091
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: '*'
+            allowedMethods: '*'
+            allowedHeaders: '*'
+      routes:
+        - id: event-service
+          uri: lb://event-service
+          predicates:
+            - Path=/events/**
+          filters:
+            - RewritePath=/events/(?<segment>/?.*), /$\{segment}
+        - id: nasa-service
+          uri: lb://nasa-service
+          predicates:
+            - Path=/nasa/**
+          filters:
+            - RewritePath=/nasa/(?<segment>/?.*), /$\{segment}
+
+management:
+  endpoint:
+    gateway:
+      enabled: true
