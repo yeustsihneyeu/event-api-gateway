@@ -31,6 +31,12 @@ spring:
             - Path=/nasa/**
           filters:
             - RewritePath=/nasa/(?<segment>/?.*), /$\{segment}
+        - id: query-service
+          uri: lb://query-service
+          predicates:
+            - Path=/query/**
+          filters:
+            - RewritePath=/query/(?<segment>/?.*), /$\{segment}
 
 management:
   endpoint:
